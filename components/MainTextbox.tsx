@@ -3,7 +3,11 @@ import { useState, useRef, useEffect, ChangeEvent } from "react";
 import iconAddWhite from "../assets/icons/add-white.svg";
 import iconUpWhite from "../assets/icons/up-white.svg";
 
-const MainTextbox: React.FC = () => {
+type Props = {
+  setUserInput: (value: string) => void;
+};
+
+const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
   const [text, setText] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -11,7 +15,9 @@ const MainTextbox: React.FC = () => {
   const handleResize = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
-  const handleButtonUp = () => {
+
+  const handleUserInput = () => {
+    setUserInput(text);
     setText("");
   };
 
@@ -32,9 +38,7 @@ const MainTextbox: React.FC = () => {
     //#endregion
     //#region handle submit text logic
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "Enter") {
-        setText("");
-      }
+      if (e.ctrlKey && e.key === "Enter") handleUserInput();
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => {
@@ -76,7 +80,7 @@ const MainTextbox: React.FC = () => {
                 p-1 mr-4 bottom-2 right-0 absolute 
                 transition duration-300 hover:scale-120 hover:border-white
               "
-            onClick={handleButtonUp}
+            onClick={handleUserInput}
           >
             <img src={iconUpWhite} alt="" />
           </button>
