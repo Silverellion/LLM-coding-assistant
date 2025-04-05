@@ -13,7 +13,24 @@ type Message = {
 const ChatBubbles: React.FC<Props> = ({ userInput }) => {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
+  const [generatingText, setGeneratingText] = React.useState<string>("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!isGenerating) return;
+    const animationCycle = [
+      "Generating",
+      "Generating.",
+      "Generating..",
+      "Generating...",
+    ];
+    let currentCycle = 0;
+    const interval = setInterval(() => {
+      currentCycle = (currentCycle + 1) % animationCycle.length;
+      setGeneratingText(animationCycle[currentCycle]);
+    }, 200);
+    return () => clearInterval(interval);
+  }, [isGenerating]);
 
   const getOllamaResponse = async (input: string) => {
     setIsGenerating(true);
@@ -56,10 +73,10 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
               }`}
             >
               <div
-                className="bg-[rgb(45,45,45)] text-white 
-                  rounded-[1rem] 
+                className={`${message.isUser ? "bg-[rgb(45,45,45)]" : ""} 
+                  text-white rounded-[1rem] 
                   mt-5 p-3 max-w-full 
-                  break-words whitespace-pre-wrap overflow-wrap-anywhere"
+                  break-words whitespace-pre-wrap overflow-wrap-anywhere`}
               >
                 {message.text}
               </div>
@@ -67,8 +84,8 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
           ))}
           {isGenerating && (
             <div className="flex justify-start">
-              <div className="bg-[rgb(45,45,45)] text-white rounded-[1rem] mt-5 p-3">
-                Generating...
+              <div className="text-[rgb(90,90,90)] mt-5 p-3">
+                {generatingText}
               </div>
             </div>
           )}
