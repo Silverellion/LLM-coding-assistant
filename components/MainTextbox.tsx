@@ -63,7 +63,7 @@ const MainTextbox: React.FC = () => {
           ></textarea>
           <button
             className="
-                rounded-full border border-[rgb(60,60,60)] cursor-pointer
+                rounded-[10px] border border-[rgb(60,60,60)] cursor-pointer
                 p-1 ml-4 bottom-2 left-0 absolute
                 transition duration-300 hover:scale-120 hover:border-white
               "
@@ -72,7 +72,7 @@ const MainTextbox: React.FC = () => {
           </button>
           <button
             className="
-                rounded-full border border-[rgb(60,60,60)] cursor-pointer 
+                rounded-[10px] border border-[rgb(60,60,60)] bg-[rgb(200,60,60)] cursor-pointer 
                 p-1 mr-4 bottom-2 right-0 absolute 
                 transition duration-300 hover:scale-120 hover:border-white
               "
