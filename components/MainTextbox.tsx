@@ -61,6 +61,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
               w-full pt-2 px-5 resize-none overflow-y-auto 
               placeholder-[rgb(90,90,90)] text-white
               focus:outline-none focus:border-none
+              scrollbar-track-teal-599
             "
             placeholder="Message"
           ></textarea>
@@ -68,7 +69,8 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
             className="
                 rounded-[10px] border border-[rgb(60,60,60)] cursor-pointer
                 p-1 ml-4 bottom-2 left-0 absolute
-                transition duration-300 hover:scale-120 hover:border-white
+                transition duration-300 
+                hover:scale-120 hover:border-white
               "
           >
             <img src={iconAddWhite} alt="" />
@@ -77,7 +79,8 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
             className="
                 rounded-[10px] border border-[rgb(60,60,60)] bg-[rgb(200,60,60)] cursor-pointer 
                 p-1 mr-4 bottom-2 right-0 absolute 
-                transition duration-300 hover:scale-120 hover:border-white
+                transition duration-300 
+                hover:scale-120 hover:border-white hover:bg-[rgb(200,40,40)]
               "
             onClick={handleUserInput}
           >
