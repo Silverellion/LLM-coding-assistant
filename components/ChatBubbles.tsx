@@ -4,12 +4,25 @@ type Props = {
 };
 
 const ChatBubbles: React.FC<Props> = ({ userInput }) => {
+  const [messages, setMessages] = React.useState<String[]>([]);
+  React.useEffect(() => {
+    if (userInput) {
+      setMessages((prevMessages) => [...prevMessages, userInput]);
+    }
+  }, [userInput]);
   return (
     <>
-      <div className="relative w-full max-w-2xl mt-10">
-        <div className="bg-[rgb(45,45,45)] text-white rounded-[1rem] absolute right-0 p-3">
-          {userInput}
-        </div>
+      <div className="relative w-full max-w-2xl mb-5">
+        {messages.map((message, index) => (
+          <div className="flex justify-end">
+            <div
+              key={index}
+              className="bg-[rgb(45,45,45)] text-white rounded-[1rem] mt-5 right-0 p-3"
+            >
+              {message}
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );

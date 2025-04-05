@@ -1,5 +1,4 @@
 import React from "react";
-import { useState, useRef, useEffect, ChangeEvent } from "react";
 import iconAddWhite from "../assets/icons/add-white.svg";
 import iconUpWhite from "../assets/icons/up-white.svg";
 
@@ -8,11 +7,11 @@ type Props = {
 };
 
 const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
-  const [text, setText] = useState<string>("");
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [text, setText] = React.useState<string>("");
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
 
-  const handleResize = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
 
@@ -21,7 +20,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
     setText("");
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     //#region adjust textbox height
     const textarea = textareaRef.current;
     const container = containerRef.current;
