@@ -1,4 +1,4 @@
-export default async function ollamaResponse(
+export default async function OllamaResponse(
   prompt: string,
   model: string = "qwen2.5-coder",
   stream: boolean = false
@@ -21,7 +21,7 @@ export default async function ollamaResponse(
     const rawResponse = jsonResponse.response ?? "No response,";
     return rawResponse;
   } catch {
-    console.log("some shit went wrong :(");
+    console.log("Failed to fetch response");
     return null;
   }
 }

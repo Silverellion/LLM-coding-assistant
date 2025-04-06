@@ -1,5 +1,6 @@
 import React from "react";
-import ollamaResponse from "../server/ollamaClient.ts";
+import OllamaResponse from "../server/OllamaService.ts";
+import CodeblockConverter from "./CodeblockConverter.tsx";
 
 type Props = {
   userInput: string;
@@ -28,20 +29,20 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
     const interval = setInterval(() => {
       currentCycle = (currentCycle + 1) % animationCycle.length;
       setGeneratingText(animationCycle[currentCycle]);
-    }, 200);
+    }, 300);
     return () => clearInterval(interval);
   }, [isGenerating]);
 
   const getOllamaResponse = async (input: string) => {
     setIsGenerating(true);
     try {
-      const response = await ollamaResponse(input);
+      const response = await OllamaResponse(input);
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: response, isUser: false },
       ]);
     } catch (error) {
-      console.error("Error getting response:", error);
+      console.log("Error getting Ollama response:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -78,7 +79,7 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
                   mt-5 p-3 max-w-full 
                   break-words whitespace-pre-wrap overflow-wrap-anywhere`}
               >
-                {message.text}
+                <CodeblockConverter inputMessage={message.text} />
               </div>
             </div>
           ))}
