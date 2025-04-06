@@ -1,5 +1,5 @@
 import React from "react";
-import OllamaResponse from "../server/OllamaService.ts";
+import OllamaResponse from "../server/Ollama/OllamaService.ts";
 import CodeblockConverter from "./CodeblockConverter.tsx";
 
 type Props = {
@@ -36,7 +36,7 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
   const getOllamaResponse = async (input: string) => {
     setIsGenerating(true);
     try {
-      const response = await OllamaResponse(input);
+      const response = await OllamaResponse(input, "testMemory");
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: response, isUser: false },

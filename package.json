@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@langchain/core": "^0.3.43",
+    "@langchain/ollama": "^0.2.0",
     "@tailwindcss/vite": "^4.0.17",
     "dompurify": "^3.2.5",
     "highlight.js": "^11.11.1",
+    "langchain": "^0.3.20",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^8.0.6",
