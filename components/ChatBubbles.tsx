@@ -15,7 +15,6 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [streamingResponse, setStreamingResponse] = React.useState<string>("");
-  const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const getOllamaResponse = async (input: string) => {
     setIsGenerating(true);
@@ -44,10 +43,6 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
       getOllamaResponse(userInput.text);
     }
   }, [userInput]);
-
-  React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamingResponse]);
 
   return (
     <>
@@ -78,8 +73,6 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
               </div>
             </div>
           )}
-
-          <div ref={messagesEndRef} />
         </div>
       </div>
     </>
