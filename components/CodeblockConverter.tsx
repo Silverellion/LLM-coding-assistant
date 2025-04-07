@@ -2,20 +2,25 @@ import React, { useState } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/felipec.css";
 import ReactMarkdown from "react-markdown";
+import iconCopy from "../assets/icons/copy.svg";
+import iconChecked from "../assets/icons/checked.svg";
 
 type Props = {
   inputMessage: string;
 };
 
 const CodeblockConverter: React.FC<Props> = ({ inputMessage }) => {
-  const [copyMessage, setCopyMessage] = useState<string>("Copy");
+  const [copyText, setCopyText] = useState<string>("Copy");
+  const [copyIcon, setCopyIcon] = useState<string>(iconCopy);
 
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
-    setCopyMessage("Copied");
+    setCopyText("Copied");
+    setCopyIcon(iconChecked);
     setTimeout(() => {
-      setCopyMessage("Copy");
-    }, 2000);
+      setCopyText("Copy");
+      setCopyIcon(iconCopy);
+    }, 5000);
   };
 
   const components = {
@@ -31,9 +36,15 @@ const CodeblockConverter: React.FC<Props> = ({ inputMessage }) => {
           <div className="relative">
             <button
               onClick={() => handleCopy(code)}
-              className="absolute top-2 right-2 z-10 px-2 py-1 text-xs bg-gray-700 text-white rounded hover:bg-gray-600"
+              className="
+                absolute top-2 right-2 z-10 px-2 py-1 
+                bg-[rgb(60,60,60)] text-white rounded cursor-pointer
+                transition duration-300 flex items-center gap-2
+                hover:scale-120 hover:bg-[rgb(45,45,45)]
+              "
             >
-              {copyMessage}
+              <img src={copyIcon} alt="" className="w-4 h-4" />
+              {copyText}
             </button>
             <pre>
               <code

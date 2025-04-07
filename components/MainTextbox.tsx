@@ -1,6 +1,6 @@
 import React from "react";
-import iconAddWhite from "../assets/icons/add-white.svg";
-import iconUpWhite from "../assets/icons/up-white.svg";
+import iconAddWhite from "../assets/icons/add.svg";
+import iconUpWhite from "../assets/icons/up.svg";
 
 type Props = {
   setUserInput: (value: string) => void;
