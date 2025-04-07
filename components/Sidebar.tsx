@@ -33,11 +33,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
           </span>
         </button>
 
-        <div className="w-7/8 mt-2">
+        <div
+          className={`mt-2 ${isCollapsed ? "mx-0" : "mx-4"} 
+          flex-col items-center transition-all duration-300 ease-out`}
+        >
           <button
             className={`
-             p-2 flex bg-[rgb(200,60,60)] text-white
+             p-2 flex bg-[rgb(200,60,60)] text-white cursor-pointer 
             ${isCollapsed ? "rounded-full" : "w-full rounded-[15px]"}
+            transition-all duration-300 ease-out
+            hover:bg-[rgb(200,40,40)] hover:scale-110
           `}
           >
             {isCollapsed ? <img src={iconAdd} /> : "New Chat"}
