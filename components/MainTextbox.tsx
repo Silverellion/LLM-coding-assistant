@@ -1,6 +1,6 @@
 import React from "react";
-import iconAddWhite from "../assets/icons/add.svg";
-import iconUpWhite from "../assets/icons/up.svg";
+import iconAdd from "../assets/icons/add.svg";
+import iconUp from "../assets/icons/up.svg";
 
 type Props = {
   setUserInput: (value: string) => void;
@@ -73,7 +73,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
                 hover:scale-120 hover:border-white
               "
           >
-            <img src={iconAddWhite} alt="" />
+            <img src={iconAdd} alt="" />
           </button>
           <button
             className="
@@ -84,7 +84,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
               "
             onClick={handleUserInput}
           >
-            <img src={iconUpWhite} alt="" />
+            <img src={iconUp} alt="" />
           </button>
         </div>
       </div>
