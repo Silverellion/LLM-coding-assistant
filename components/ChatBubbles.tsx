@@ -1,6 +1,6 @@
 import React from "react";
-import OllamaResponse from "../server/Ollama/OllamaService.ts";
-import CodeblockConverter from "./CodeblockConverter.tsx";
+import OllamaResponse from "../server/Ollama/OllamaService";
+import CodeblockConverter from "./CodeblockConverter";
 
 type Props = {
   userInput: { dateSent: Date; text: string } | null;
@@ -14,53 +14,40 @@ type Message = {
 const ChatBubbles: React.FC<Props> = ({ userInput }) => {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
-  const [generatingText, setGeneratingText] = React.useState<string>("");
+  const [streamingResponse, setStreamingResponse] = React.useState<string>("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!isGenerating) return;
-    const animationCycle = [
-      "Generating",
-      "Generating.",
-      "Generating..",
-      "Generating...",
-    ];
-    let currentCycle = 0;
-    const interval = setInterval(() => {
-      currentCycle = (currentCycle + 1) % animationCycle.length;
-      setGeneratingText(animationCycle[currentCycle]);
-    }, 300);
-    return () => clearInterval(interval);
-  }, [isGenerating]);
 
   const getOllamaResponse = async (input: string) => {
     setIsGenerating(true);
+    setStreamingResponse("");
+
     try {
-      const response = await OllamaResponse(input, "testMemory");
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: response, isUser: false },
+      const finalResponse = await OllamaResponse(input, "testMemory", (text) =>
+        setStreamingResponse(text)
+      );
+
+      setMessages((prev) => [
+        ...prev,
+        { text: finalResponse || "", isUser: false },
       ]);
     } catch (error) {
       console.log("Error getting Ollama response:", error);
     } finally {
       setIsGenerating(false);
+      setStreamingResponse("");
     }
   };
 
   React.useEffect(() => {
     if (userInput && userInput.text) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: userInput.text, isUser: true },
-      ]);
+      setMessages((prev) => [...prev, { text: userInput.text, isUser: true }]);
       getOllamaResponse(userInput.text);
     }
   }, [userInput]);
 
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isGenerating]);
+  }, [messages, streamingResponse]);
 
   return (
     <>
@@ -83,13 +70,15 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
               </div>
             </div>
           ))}
-          {isGenerating && (
+
+          {isGenerating && streamingResponse && (
             <div className="flex justify-start">
-              <div className="text-[rgb(90,90,90)] mt-5 p-3">
-                {generatingText}
+              <div className="text-white rounded-[1rem] mt-5 p-3 max-w-full break-words whitespace-pre-wrap overflow-wrap-anywhere">
+                <CodeblockConverter inputMessage={streamingResponse} />
               </div>
             </div>
           )}
+
           <div ref={messagesEndRef} />
         </div>
       </div>

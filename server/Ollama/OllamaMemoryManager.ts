@@ -18,6 +18,7 @@ export class OllamaMemoryManager {
       const ollama = new ChatOllama({
         baseUrl: this.baseUrl,
         model: model,
+        streaming: true,
       });
 
       const chain = new ConversationChain({
