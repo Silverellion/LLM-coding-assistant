@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/global.css";
+import "../global.css";
 import ChatBubbles from "../components/ChatBubbles";
 import MainTextbox from "../components/MainTextbox";
 

@@ -1,16 +1,17 @@
 @import "tailwindcss";
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: rgb(60, 60, 60);
-  border-radius: 10px;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgb(200, 60, 60);
-  border-radius: 10px;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
