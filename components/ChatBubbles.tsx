@@ -3,7 +3,7 @@ import OllamaResponse from "../server/Ollama/OllamaService.ts";
 import CodeblockConverter from "./CodeblockConverter.tsx";
 
 type Props = {
-  userInput: string;
+  userInput: { dateSent: Date; text: string } | null;
 };
 
 type Message = {
@@ -49,12 +49,12 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
   };
 
   React.useEffect(() => {
-    if (userInput) {
+    if (userInput && userInput.text) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: userInput, isUser: true },
+        { text: userInput.text, isUser: true },
       ]);
-      getOllamaResponse(userInput);
+      getOllamaResponse(userInput.text);
     }
   }, [userInput]);
 

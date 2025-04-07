@@ -4,7 +4,13 @@ import ChatBubbles from "../components/ChatBubbles";
 import MainTextbox from "../components/MainTextbox";
 
 function App() {
-  const [userInput, setUserInput] = useState<string>("");
+  const [userInput, setUserInput] = useState<{
+    dateSent: Date;
+    text: string;
+  } | null>(null);
+  const handleUserInput = (text: string) => {
+    setUserInput({ dateSent: new Date(), text: text });
+  };
   return (
     <>
       <div
@@ -14,7 +20,7 @@ function App() {
       "
       >
         <ChatBubbles userInput={userInput} />
-        <MainTextbox setUserInput={setUserInput} />
+        <MainTextbox setUserInput={handleUserInput} />
       </div>
     </>
   );
