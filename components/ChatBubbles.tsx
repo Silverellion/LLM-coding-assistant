@@ -52,7 +52,7 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
   return (
     <>
       <div className="w-full overflow-y-auto flex mb-5">
-        <div className="relative w-full max-w-2xl mx-auto">
+        <div className="relative w-full max-w-3xl mx-auto">
           {messages.map((message, index) => (
             <div
               key={index}
