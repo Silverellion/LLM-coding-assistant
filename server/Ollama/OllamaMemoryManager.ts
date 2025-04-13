@@ -5,9 +5,13 @@ import { ChatOllama } from "@langchain/ollama";
 export class OllamaMemoryManager {
   private static memories: Map<string, BufferMemory> = new Map();
   private static chains: Map<string, ConversationChain> = new Map();
-  private static baseUrl = "http://localhost:11434";
+  private static apiPrefix = import.meta.env.VITE_API_PREFIX || "/api/ollama";
 
-  static getOrCreateChain(memoryId: string, model: string): ConversationChain {
+  static getOrCreateChain(
+    memoryId: string,
+    model: string,
+    customBaseUrl?: string
+  ): ConversationChain {
     if (!this.chains.has(memoryId)) {
       const memory = new BufferMemory({
         returnMessages: true,
@@ -15,8 +19,14 @@ export class OllamaMemoryManager {
       });
       this.memories.set(memoryId, memory);
 
+      const baseUrl =
+        customBaseUrl ||
+        (typeof window !== "undefined"
+          ? window.location.origin + this.apiPrefix
+          : "http://localhost:5173" + this.apiPrefix);
+
       const ollama = new ChatOllama({
-        baseUrl: this.baseUrl,
+        baseUrl: baseUrl,
         model: model,
         streaming: true,
       });

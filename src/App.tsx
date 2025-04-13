@@ -41,7 +41,6 @@ function App() {
   };
 
   const handleNewChat = () => {
-    console.log("Creating new chat");
     setMessages([]);
     setUserInput(null);
     chatManager.createNewChat();
