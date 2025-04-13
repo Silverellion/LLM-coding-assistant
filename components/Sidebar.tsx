@@ -42,7 +42,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
              p-2 flex bg-[rgb(200,60,60)] text-white cursor-pointer 
             ${isCollapsed ? "rounded-full" : "w-full rounded-[15px]"}
             transition-all duration-300 ease-out
-            hover:bg-[rgb(200,40,40)] hover:scale-110
+            hover:bg-[rgb(200,40,40)] 
+            ${isCollapsed ? "hover:scale-120" : "hover:translate-x-3"} 
           `}
           >
             {isCollapsed ? <img src={iconAdd} /> : "New Chat"}
