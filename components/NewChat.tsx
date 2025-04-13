@@ -21,16 +21,27 @@ const NewChat: React.FC<Props> = ({ isSidebarCollapsed }) => {
 
   return (
     <button
-      className={`w-full p-2 mt-1 bg-[rgb(200,60,60)] text-white flex items-center rounded-[15px] 
-        cursor-pointer hover:bg-[rgb(200,40,40)] hover:translate-x-3 transition-all duration-300 ease-out`}
+      className={`${
+        isSidebarCollapsed
+          ? "w-12 h-12 fixed bottom-4 right-4 rounded-full justify-center"
+          : "w-full p-2 mt-1 rounded-full"
+      } 
+        bg-[rgb(200,60,60)] text-white flex items-center 
+        cursor-pointer hover:bg-[rgb(200,40,40)] transition-all duration-300 ease-out
+        ${isSidebarCollapsed ? "hover:scale-110" : "hover:translate-x-3"}`}
     >
-      <span
-        className={`transform transition-opacity duration-300 ease-out 
-          ${isTextVisible ? "opacity-100" : "opacity-0"}`}
-      >
-        New Chat
-      </span>
+      {isSidebarCollapsed ? (
+        <span className="text-2xl">+</span>
+      ) : (
+        <span
+          className={`transform transition-opacity duration-300 ease-out 
+            ${isTextVisible ? "opacity-100" : "opacity-0"}`}
+        >
+          New Chat
+        </span>
+      )}
     </button>
   );
 };
+
 export default NewChat;
