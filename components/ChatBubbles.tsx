@@ -1,18 +1,15 @@
 import React from "react";
 import OllamaResponse from "../server/Ollama/OllamaService";
 import CodeblockConverter from "./CodeblockConverter";
+import { ChatMessage } from "../server/ChatManager";
 
 type Props = {
   userInput: { dateSent: Date; text: string } | null;
+  messages: ChatMessage[];
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 };
 
-type Message = {
-  text: string;
-  isUser: boolean;
-};
-
-const ChatBubbles: React.FC<Props> = ({ userInput }) => {
-  const [messages, setMessages] = React.useState<Message[]>([]);
+const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [streamingResponse, setStreamingResponse] = React.useState<string>("");
 
@@ -21,7 +18,7 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
     setStreamingResponse("");
 
     try {
-      const finalResponse = await OllamaResponse(input, "testMemory", (text) =>
+      const finalResponse = await OllamaResponse(input, (text) =>
         setStreamingResponse(text)
       );
 
@@ -39,7 +36,6 @@ const ChatBubbles: React.FC<Props> = ({ userInput }) => {
 
   React.useEffect(() => {
     if (userInput && userInput.text) {
-      setMessages((prev) => [...prev, { text: userInput.text, isUser: true }]);
       getOllamaResponse(userInput.text);
     }
   }, [userInput]);

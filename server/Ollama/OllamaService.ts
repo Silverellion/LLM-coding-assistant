@@ -1,12 +1,16 @@
 import { OllamaMemoryManager } from "./OllamaMemoryManager";
+import { ChatManager } from "../ChatManager";
 
 export default function OllamaResponse(
   prompt: string,
-  memoryId: string,
   streamHandler: ((text: string) => void) | null = null,
   model: string = "qwen2.5-coder"
 ) {
   try {
+    // Get the current chat ID from the chat manager
+    const chatManager = ChatManager.getInstance();
+    const memoryId = chatManager.getCurrentChatId() || "temp-" + Date.now();
+
     const chain = OllamaMemoryManager.getOrCreateChain(memoryId, model);
     let fullResponse = "";
 

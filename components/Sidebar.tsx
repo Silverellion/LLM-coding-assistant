@@ -5,9 +5,18 @@ import NewChat from "./NewChat";
 type SidebarProps = {
   isCollapsed: boolean;
   toggleSidebar: () => void;
+  onNewChat: () => void;
+  savedChats: { id: string; name: string }[];
+  onLoadChat: (chatId: string) => void;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  isCollapsed,
+  toggleSidebar,
+  onNewChat,
+  savedChats,
+  onLoadChat,
+}) => {
   return (
     <>
       <div
@@ -33,13 +42,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
 
         {!isCollapsed && (
           <div className="mt-2 mx-4 flex flex-col items-center">
-            <NewChat isSidebarCollapsed={isCollapsed} />
-            <SavedChat isSidebarCollapsed={isCollapsed} />
-            <SavedChat isSidebarCollapsed={isCollapsed} />
+            <NewChat isSidebarCollapsed={isCollapsed} onNewChat={onNewChat} />
+            {savedChats.map((chat) => (
+              <SavedChat
+                key={chat.id}
+                isSidebarCollapsed={isCollapsed}
+                chatName={chat.name}
+                onClick={() => onLoadChat(chat.id)}
+              />
+            ))}
           </div>
         )}
       </div>
-      {isCollapsed && <NewChat isSidebarCollapsed={isCollapsed} />}
+      {isCollapsed && (
+        <NewChat isSidebarCollapsed={isCollapsed} onNewChat={onNewChat} />
+      )}
     </>
   );
 };
