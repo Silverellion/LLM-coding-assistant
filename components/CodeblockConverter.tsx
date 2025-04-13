@@ -38,9 +38,9 @@ const CodeblockConverter: React.FC<Props> = ({ inputMessage }) => {
           onClick={handleCopy}
           className="
             absolute top-2 right-2 z-10 px-2 py-1 
-            bg-[rgb(60,60,60)] text-white rounded cursor-pointer
+            bg-[rgb(200,60,60)] text-white rounded cursor-pointer
             transition duration-300 flex items-center gap-2
-            hover:scale-120 hover:bg-[rgb(45,45,45)]
+            hover:scale-120 hover:bg-[rgb(200,40,40)]
           "
         >
           <img src={copyIcon} alt="" className="w-4 h-4" />
