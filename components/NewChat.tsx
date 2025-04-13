@@ -24,15 +24,15 @@ const NewChat: React.FC<Props> = ({ isSidebarCollapsed }) => {
     <button
       className={`${
         isSidebarCollapsed
-          ? "w-12 h-12 fixed bottom-4 right-4 rounded-full justify-center"
-          : "w-full p-2 mt-1 rounded-full"
+          ? "w-10 h-10 fixed top-3 left-2 rounded-full justify-center"
+          : "w-full p-2 mt-1 rounded-[15px]"
       } 
         bg-[rgb(200,60,60)] text-white flex items-center 
         cursor-pointer hover:bg-[rgb(200,40,40)] transition-all duration-300 ease-out
         ${isSidebarCollapsed ? "hover:scale-110" : "hover:translate-x-3"}`}
     >
       {isSidebarCollapsed ? (
-        <span className="text-2xl">+</span>
+        <img src={IconAdd} />
       ) : (
         <span
           className={`transform transition-opacity duration-300 ease-out 
