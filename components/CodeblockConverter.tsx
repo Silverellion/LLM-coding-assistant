@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/felipec.css";
 import ReactMarkdown from "react-markdown";
-import iconCopy from "../assets/icons/copy.svg";
-import iconChecked from "../assets/icons/checked.svg";
+import IconCopy from "../assets/icons/copy.svg";
+import IconChecked from "../assets/icons/checked.svg";
 
 type Props = {
   inputMessage: string;
@@ -18,15 +18,15 @@ const CodeblockConverter: React.FC<Props> = ({ inputMessage }) => {
     language: string;
   }) => {
     const [copyText, setCopyText] = useState<string>("Copy");
-    const [copyIcon, setCopyIcon] = useState<string>(iconCopy);
+    const [copyIcon, setCopyIcon] = useState<string>(IconCopy);
 
     const handleCopy = () => {
       navigator.clipboard.writeText(code);
       setCopyText("Copied");
-      setCopyIcon(iconChecked);
+      setCopyIcon(IconChecked);
       setTimeout(() => {
         setCopyText("Copy");
-        setCopyIcon(iconCopy);
+        setCopyIcon(IconCopy);
       }, 5000);
     };
 
