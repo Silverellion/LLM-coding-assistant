@@ -65,10 +65,8 @@ export class ChatManager {
       } catch (error) {
         console.error("Error loading chat:", error);
       }
-
       return chatToLoad;
     }
-
     return null;
   }
 
@@ -94,7 +92,6 @@ export class ChatManager {
           ? { ...chat, messages: [...chat.messages, { text, isUser: true }] }
           : chat
       );
-
       return this.currentChatId;
     }
   }
@@ -102,7 +99,6 @@ export class ChatManager {
   public updateChatWithAIResponse(response: string): void {
     if (this.currentChatId) {
       const aiMessage: ChatMessage = { text: response, isUser: false };
-
       this.savedChats = this.savedChats.map((chat) =>
         chat.id === this.currentChatId
           ? { ...chat, messages: [...chat.messages, aiMessage] }
