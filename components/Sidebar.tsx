@@ -1,5 +1,6 @@
 import React from "react";
-import SavedChat from "./SavedChat";
+import SavedChat from "./SavedChats";
+import NewChat from "./NewChat";
 import iconAdd from "../assets/icons/add.svg";
 
 type SidebarProps = {
@@ -32,14 +33,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
 
       {!isCollapsed && (
         <div className="mt-2 mx-4 flex flex-col items-center">
-          <button
-            className="p-2 flex bg-[rgb(200,60,60)] text-white w-full rounded-[15px] 
-              cursor-pointer hover:bg-[rgb(200,40,40)] hover:translate-x-3 transition-all duration-300"
-          >
-            New Chat
-          </button>
-          <SavedChat isSidebarCollasped={isCollapsed} />
-          <SavedChat isSidebarCollasped={isCollapsed} />
+          <NewChat isSidebarCollapsed={isCollapsed} />
+          <SavedChat isSidebarCollapsed={isCollapsed} />
+          <SavedChat isSidebarCollapsed={isCollapsed} />
         </div>
       )}
     </div>
