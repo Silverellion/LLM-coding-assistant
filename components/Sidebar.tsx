@@ -41,7 +41,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         {!isCollapsed && (
-          <div className="mt-2 mx-4 flex flex-col items-center">
+          <div
+            className="mt-2 mx-4 flex flex-col items-center overflow-y-auto"
+            style={{ maxHeight: "calc(100vh - 50px)" }}
+          >
             <NewChat isSidebarCollapsed={isCollapsed} onNewChat={onNewChat} />
             {savedChats.map((chat) => (
               <SavedChat
