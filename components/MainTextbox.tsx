@@ -43,7 +43,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
           handleUserInput();
         }
       } else if (e.key === "Enter" && e.shiftKey) {
-        e.preventDefault(); // Prevents default behavior
+        e.preventDefault(); // Prevents submitting the text
         const textarea = textareaRef.current;
         if (textarea) {
           const cursorPosition = textarea.selectionStart;
