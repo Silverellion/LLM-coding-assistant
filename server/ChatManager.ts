@@ -54,17 +54,13 @@ export class ChatManager {
     const chatToLoad = this.savedChats.find((chat) => chat.id === chatId);
 
     if (chatToLoad) {
-      try {
-        // Clear memory for the current chat if it exists
-        if (this.currentChatId) {
-          OllamaMemoryManager.clearMemory(this.currentChatId);
-        }
-        // Update Ai's memory
-        this.currentChatId = chatId;
-        this.rebuildMemoryFromMessages(chatId, chatToLoad.messages);
-      } catch (error) {
-        console.error("Error loading chat:", error);
+      // Clear memory for the current chat if it exists
+      if (this.currentChatId) {
+        OllamaMemoryManager.clearMemory(this.currentChatId);
       }
+      // Update Ai's memory
+      this.currentChatId = chatId;
+      this.rebuildMemoryFromMessages(chatId, chatToLoad.messages);
       return chatToLoad;
     }
     return null;
@@ -111,20 +107,13 @@ export class ChatManager {
     chatId: string,
     messages: ChatMessage[]
   ): void {
-    try {
-      // Clear any existing memory for this chat ID
-      OllamaMemoryManager.clearMemory(chatId);
-      // Get the memory chain for this chat ID
-      const chain = OllamaMemoryManager.getOrCreateChain(
-        chatId,
-        this.modelName
-      );
+    // Clear any existing memory for this chat ID
+    OllamaMemoryManager.clearMemory(chatId);
+    // Get the memory chain for this chat ID
+    const chain = OllamaMemoryManager.getOrCreateChain(chatId, this.modelName);
 
-      // Process message pairs sequentially
-      this.processMessagePairs(chain, messages);
-    } catch (error) {
-      console.error("Error in rebuildMemoryFromMessages:", error);
-    }
+    // Process message pairs sequentially
+    this.processMessagePairs(chain, messages);
   }
 
   private processMessagePairs(chain: any, messages: ChatMessage[]): void {
@@ -146,15 +135,11 @@ export class ChatManager {
     // Process pairs in sequence
     if (messagePairs.length > 0) {
       (async () => {
-        try {
-          for (const pair of messagePairs) {
-            await chain.memory.saveContext(
-              { input: pair.input },
-              { response: pair.response }
-            );
-          }
-        } catch (error) {
-          console.error("Error processing message pairs:", error);
+        for (const pair of messagePairs) {
+          await chain.memory.saveContext(
+            { input: pair.input },
+            { response: pair.response }
+          );
         }
       })();
     }

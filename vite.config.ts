@@ -5,20 +5,6 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
-  const isCloudflare = !!env.CLOUDFLARE_TUNNEL_HOSTNAME;
-
-  // Log the environment variables for debugging
-  console.log("Environment Configuration:");
-  console.log(
-    "- OLLAMA_BASE_URL:",
-    env.OLLAMA_BASE_URL || "http://localhost:11434"
-  );
-  console.log("- VITE_API_PREFIX:", env.VITE_API_PREFIX || "/api/ollama");
-  console.log(
-    "- CLOUDFLARE_TUNNEL:",
-    env.CLOUDFLARE_TUNNEL_HOSTNAME || "not set"
-  );
-
   return {
     plugins: [react(), tailwindcss()],
     server: {
@@ -40,7 +26,6 @@ export default defineConfig(({ mode }) => {
           },
           rewrite: (path) => {
             const newPath = path.replace(/^\/api\/ollama/, "");
-            console.log(`Rewriting path: ${path} -> ${newPath}`);
             return newPath;
           },
         },
