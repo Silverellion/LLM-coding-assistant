@@ -29,8 +29,7 @@ const NewChat: React.FC<Props> = ({ isSidebarCollapsed, onNewChat }) => {
           : "w-full p-2 mt-1 rounded-[15px]"
       } 
     bg-[rgb(200,60,60)] text-white flex items-center 
-    cursor-pointer hover:bg-[rgb(200,40,40)] transition-all duration-300 ease-out
-    ${isSidebarCollapsed ? "hover:scale-110" : "hover:translate-x-3"}`}
+    cursor-pointer hover:bg-[rgb(200,40,40)] transition-all duration-300 ease-out hover:scale-110`}
     >
       {isSidebarCollapsed ? (
         <img src={IconAdd} />
