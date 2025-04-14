@@ -2,6 +2,7 @@ import React from "react";
 import OllamaResponse from "../server/Ollama/OllamaService";
 import CodeblockConverter from "./CodeblockConverter";
 import { ChatMessage } from "../server/ChatManager";
+import LoadingAnimation from "./LoadingAnimation";
 
 type Props = {
   userInput: { dateSent: Date; text: string } | null;
@@ -61,6 +62,12 @@ const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
               </div>
             </div>
           ))}
+
+          {isGenerating && !streamingResponse && (
+            <div className="flex justify-start">
+              <LoadingAnimation />
+            </div>
+          )}
 
           {isGenerating && streamingResponse && (
             <div className="flex justify-start">
