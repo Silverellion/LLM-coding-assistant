@@ -37,7 +37,25 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
     //#endregion
     //#region handle submit text logic
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "Enter") handleUserInput();
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault(); // Prevents adding a new line
+        if (text.trim() !== "") {
+          handleUserInput();
+        }
+      } else if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault(); // Prevents default behavior
+        const textarea = textareaRef.current;
+        if (textarea) {
+          const cursorPosition = textarea.selectionStart;
+          const textBefore = text.slice(0, cursorPosition);
+          const textAfter = text.slice(cursorPosition);
+          setText(`${textBefore}\n${textAfter}`);
+          setTimeout(() => {
+            textarea.selectionStart = textarea.selectionEnd =
+              cursorPosition + 1;
+          }, 0);
+        }
+      }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => {

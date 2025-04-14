@@ -13,8 +13,6 @@ function App() {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [savedChats, setSavedChats] = useState<SavedChat[]>([]);
-
-  // Initialize chat manager
   const chatManager = ChatManager.getInstance();
 
   useEffect(() => {
@@ -29,7 +27,6 @@ function App() {
     const newUserInput = { dateSent: new Date(), text: text };
     setUserInput(newUserInput);
 
-    // Add user message to messages array
     const newMessages = [...messages, { text, isUser: true }];
     setMessages(newMessages);
     chatManager.addUserMessage(text);
