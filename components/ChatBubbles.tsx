@@ -13,6 +13,7 @@ type Props = {
 const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [streamingResponse, setStreamingResponse] = React.useState<string>("");
+  const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
   const getOllamaResponse = async (input: string) => {
     setIsGenerating(true);
@@ -35,15 +36,25 @@ const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
     }
   };
 
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
   React.useEffect(() => {
     if (userInput && userInput.text) {
       getOllamaResponse(userInput.text);
+      scrollToBottom();
     }
   }, [userInput]);
 
   return (
     <>
-      <div className="w-full overflow-y-auto flex mb-5">
+      <div className="w-full overflow-y-auto flex mb-5" ref={chatContainerRef}>
         <div className="relative w-full max-w-3xl mx-auto">
           {messages.map((message, index) => (
             <div
