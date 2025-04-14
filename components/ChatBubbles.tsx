@@ -76,7 +76,9 @@ const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
 
           {isGenerating && !streamingResponse && (
             <div className="flex justify-start">
-              <LoadingAnimation />
+              <div className="text-[rgb(90,90,90)] rounded-[1rem] mt-5 p-3 max-w-full break-words whitespace-pre-wrap overflow-wrap-anywhere">
+                <LoadingAnimation />
+              </div>
             </div>
           )}
 

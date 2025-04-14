@@ -11,10 +11,6 @@ const LoadingAnimation: React.FC = () => {
     }, 200);
     return () => clearInterval(interval);
   }, []);
-  return (
-    <>
-      <div className="text-[rgb(90,90,90)]">Generating{dots}</div>
-    </>
-  );
+  return <div>Generating{dots}</div>;
 };
 export default LoadingAnimation;
