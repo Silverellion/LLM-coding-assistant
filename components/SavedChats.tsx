@@ -50,12 +50,12 @@ const SavedChat: React.FC<Props> = ({
         {chatName}
       </span>
       {isTextVisible && isHovered && (
-        <button
+        <span
           onClick={handleDeleteClick}
           className="cursor-pointer hover:scale-140 transition-all duration-300 ease-out"
         >
           <img src={IconDelete} />
-        </button>
+        </span>
       )}
     </button>
   );
