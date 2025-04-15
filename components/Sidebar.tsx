@@ -9,6 +9,7 @@ type SidebarProps = {
   savedChats: { id: string; name: string }[];
   onLoadChat: (chatId: string) => void;
   onDeleteChat: (chatId: string) => void;
+  onRenameChat: (chatId: string, newName: string) => void;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -18,6 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   savedChats,
   onLoadChat,
   onDeleteChat,
+  onRenameChat,
 }) => {
   return (
     <>
@@ -53,6 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 chatId={chat.id}
                 onClick={() => onLoadChat(chat.id)}
                 onDelete={onDeleteChat}
+                onRename={onRenameChat}
               />
             ))}
           </div>

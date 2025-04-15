@@ -59,6 +59,20 @@ export class ChatMiddleware {
     return { newMessages: [], savedChats };
   }
 
+  public handleRenameChat(
+    chatId: string,
+    newName: string
+  ): {
+    savedChats: SavedChat[];
+  } {
+    const savedChats = this.chatManager
+      .getSavedChats()
+      .map((chat) => (chat.id === chatId ? { ...chat, name: newName } : chat));
+
+    this.chatManager.setSavedChats(savedChats);
+    return { savedChats };
+  }
+
   public handleDeleteChat(
     chatId: string,
     currentChatId: string | null

@@ -57,14 +57,17 @@ function App() {
   const handleDeleteChat = (chatId: string) => {
     const { newMessages, savedChats, isCurrentChat } =
       chatMiddleware.handleDeleteChat(chatId, currentChatId);
-
     setSavedChats(savedChats);
-
     if (isCurrentChat) {
       setMessages(newMessages);
       setUserInput(null);
       setCurrentChatId(chatMiddleware.getCurrentChatId());
     }
+  };
+
+  const handleRenameChat = (chatId: string, newName: string) => {
+    const { savedChats } = chatMiddleware.handleRenameChat(chatId, newName);
+    setSavedChats(savedChats);
   };
 
   // Update chat middleware and UI when AI responds
@@ -99,6 +102,7 @@ function App() {
         onNewChat={handleNewChat}
         onLoadChat={handleLoadChat}
         onDeleteChat={handleDeleteChat}
+        onRenameChat={handleRenameChat}
       />
       <div
         className={`flex flex-col items-center justify-end transition-all duration-300 w-full ${
