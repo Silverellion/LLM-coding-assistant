@@ -3,7 +3,8 @@ import "../global.css";
 import ChatBubbles from "../components/ChatBubbles";
 import MainTextbox from "../components/MainTextbox";
 import Sidebar from "../components/Sidebar";
-import { ChatManager, SavedChat, ChatMessage } from "../server/ChatManager";
+import { ChatMessage, SavedChat } from "../server/ChatManager";
+import { ChatMiddleware } from "../server/ChatMiddleware";
 
 function App() {
   const [userInput, setUserInput] = useState<{
@@ -13,24 +14,25 @@ function App() {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [savedChats, setSavedChats] = useState<SavedChat[]>([]);
-  const chatManager = ChatManager.getInstance();
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const chatMiddleware = ChatMiddleware.getInstance();
 
   useEffect(() => {
-    setSavedChats(chatManager.getSavedChats());
+    setSavedChats(chatMiddleware.getSavedChats());
+    setCurrentChatId(chatMiddleware.getCurrentChatId());
   }, []);
-
-  useEffect(() => {
-    chatManager.setSavedChats(savedChats);
-  }, [savedChats]);
 
   const handleUserInput = (text: string) => {
     const newUserInput = { dateSent: new Date(), text: text };
     setUserInput(newUserInput);
 
-    const newMessages = [...messages, { text, isUser: true }];
+    const { newMessages, savedChats } = chatMiddleware.handleUserInput(
+      text,
+      messages
+    );
     setMessages(newMessages);
-    chatManager.addUserMessage(text);
-    setSavedChats([...chatManager.getSavedChats()]);
+    setSavedChats(savedChats);
+    setCurrentChatId(chatMiddleware.getCurrentChatId());
   };
 
   const toggleSidebar = () => {
@@ -38,21 +40,34 @@ function App() {
   };
 
   const handleNewChat = () => {
-    setMessages([]);
+    const { newMessages, savedChats } = chatMiddleware.handleNewChat();
+    setMessages(newMessages);
+    setSavedChats(savedChats);
     setUserInput(null);
-    chatManager.createNewChat();
+    setCurrentChatId(chatMiddleware.getCurrentChatId());
   };
 
   const handleLoadChat = (chatId: string) => {
-    const loadedChat = chatManager.loadChat(chatId);
+    const { newMessages, savedChats } = chatMiddleware.handleLoadChat(chatId);
+    setMessages(newMessages);
+    setSavedChats(savedChats);
+    setCurrentChatId(chatMiddleware.getCurrentChatId());
+  };
 
-    if (loadedChat) {
-      // Update UI with loaded messages
-      setMessages(loadedChat.messages);
+  const handleDeleteChat = (chatId: string) => {
+    const { newMessages, savedChats, isCurrentChat } =
+      chatMiddleware.handleDeleteChat(chatId, currentChatId);
+
+    setSavedChats(savedChats);
+
+    if (isCurrentChat) {
+      setMessages(newMessages);
+      setUserInput(null);
+      setCurrentChatId(chatMiddleware.getCurrentChatId());
     }
   };
 
-  // Update chat manager and UI when AI responds
+  // Update chat middleware and UI when AI responds
   const updateMessagesAndSavedChat: React.Dispatch<
     React.SetStateAction<ChatMessage[]>
   > = (newMessagesAction) => {
@@ -66,8 +81,12 @@ function App() {
     // Find the AI response (the last message if it's from AI)
     const lastMessage = newMessages[newMessages.length - 1];
     if (lastMessage && !lastMessage.isUser) {
-      chatManager.updateChatWithAIResponse(lastMessage.text);
-      setSavedChats([...chatManager.getSavedChats()]);
+      const { savedChats } = chatMiddleware.updateWithAIResponse(
+        lastMessage.text,
+        newMessages
+      );
+      setSavedChats(savedChats);
+      setCurrentChatId(chatMiddleware.getCurrentChatId());
     }
   };
 
@@ -79,6 +98,7 @@ function App() {
         savedChats={savedChats}
         onNewChat={handleNewChat}
         onLoadChat={handleLoadChat}
+        onDeleteChat={handleDeleteChat}
       />
       <div
         className={`flex flex-col items-center justify-end transition-all duration-300 w-full ${

@@ -1,17 +1,23 @@
 import React from "react";
+import IconDelete from "../assets/icons/delete.svg";
 
 type Props = {
   isSidebarCollapsed: boolean;
   chatName: string;
+  chatId: string;
   onClick: () => void;
+  onDelete: (chatId: string) => void;
 };
 
 const SavedChat: React.FC<Props> = ({
   isSidebarCollapsed,
   chatName,
+  chatId,
   onClick,
+  onDelete,
 }) => {
   const [isTextVisible, setIsTextVisible] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
 
   React.useEffect(() => {
     if (!isSidebarCollapsed) {
@@ -24,11 +30,18 @@ const SavedChat: React.FC<Props> = ({
     }
   }, [isSidebarCollapsed]);
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the parent button's onClick
+    onDelete(chatId);
+  };
+
   return (
     <button
       onClick={onClick}
-      className={`w-full p-2 mt-2 bg-[rgb(45,45,45)] text-white flex items-center rounded-[15px] 
-        cursor-pointer hover:bg-[rgb(30,30,30)] hover:scale-110 transition-all duration-300 ease-out`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`w-full p-2 mt-2 bg-[rgb(45,45,45)] text-white flex items-center justify-between rounded-[15px] 
+        cursor-pointer hover:bg-[rgb(30,30,30)] hover:scale-110 transition-all duration-300 ease-out relative`}
     >
       <span
         className={`transform transition-opacity duration-300 ease-out 
@@ -36,6 +49,14 @@ const SavedChat: React.FC<Props> = ({
       >
         {chatName}
       </span>
+      {isTextVisible && isHovered && (
+        <button
+          onClick={handleDeleteClick}
+          className="cursor-pointer hover:scale-140 transition-all duration-300 ease-out"
+        >
+          <img src={IconDelete} />
+        </button>
+      )}
     </button>
   );
 };
