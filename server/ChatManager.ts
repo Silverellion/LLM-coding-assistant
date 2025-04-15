@@ -69,13 +69,12 @@ export class ChatManager {
   public addUserMessage(text: string): string {
     // Create a new chat if this is the first message of a new chat
     if (!this.currentChatId) {
-      const truncatedName = text.length > 30 ? text.slice(0, 30) + "..." : text;
       const newChatId = Date.now().toString();
       this.currentChatId = newChatId;
 
       const newChat: SavedChat = {
         id: newChatId,
-        name: truncatedName,
+        name: text,
         messages: [{ text, isUser: true }],
       };
 

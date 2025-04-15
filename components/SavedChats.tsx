@@ -43,16 +43,18 @@ const SavedChat: React.FC<Props> = ({
       className={`w-full p-2 mt-2 bg-[rgb(45,45,45)] text-white flex items-center justify-between rounded-[15px] 
         cursor-pointer hover:bg-[rgb(30,30,30)] hover:scale-110 transition-all duration-300 ease-out relative`}
     >
-      <span
-        className={`transform transition-opacity duration-300 ease-out 
-          ${isTextVisible ? "opacity-100" : "opacity-0"}`}
-      >
-        {chatName}
-      </span>
+      <div className="flex-1 overflow-hidden">
+        <span
+          className={`transform transition-opacity duration-300 ease-out text-ellipsis-fade
+            ${isTextVisible ? "opacity-100" : "opacity-0"}`}
+        >
+          {chatName}
+        </span>
+      </div>
       {isTextVisible && isHovered && (
         <span
           onClick={handleDeleteClick}
-          className="cursor-pointer hover:scale-140 transition-all duration-300 ease-out"
+          className="cursor-pointer hover:scale-140 transition-all duration-300 ease-out ml-2 flex-shrink-0"
         >
           <img src={IconDelete} />
         </span>
