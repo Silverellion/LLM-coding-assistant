@@ -16,8 +16,10 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
   };
 
   const handleUserInput = () => {
-    setUserInput(text);
-    setText("");
+    if (text.trim() !== "") {
+      setUserInput(text);
+      setText("");
+    }
   };
 
   React.useEffect(() => {
@@ -39,9 +41,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault(); // Prevents adding a new line
-        if (text.trim() !== "") {
-          handleUserInput();
-        }
+        handleUserInput();
       } else if (e.key === "Enter" && e.shiftKey) {
         e.preventDefault(); // Prevents submitting the text
         const textarea = textareaRef.current;
