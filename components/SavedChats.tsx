@@ -70,6 +70,12 @@ const SavedChat: React.FC<Props> = ({
     if (e.key === "Escape") {
       setEditedName(chatName); // Reset to original name
       setIsEditing(false);
+    } else if (e.key === "Enter") {
+      e.preventDefault(); // Prevent any default form submission
+      if (editedName.trim()) {
+        onRename(chatId, editedName);
+        setIsEditing(false);
+      }
     }
   };
 
