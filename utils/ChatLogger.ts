@@ -17,33 +17,37 @@ function cleanUserMessage(message: string): string {
 }
 
 function extractUserMessage(body: string): string {
-  const parsedBody = JSON.parse(body);
-  let actualUserMessage = "";
+  try {
+    const parsedBody = JSON.parse(body);
+    let actualUserMessage = "";
 
-  if (parsedBody.userMessage) {
-    actualUserMessage = parsedBody.userMessage;
-  } else if (parsedBody.prompt) {
-    actualUserMessage = parsedBody.prompt;
-  } else if (parsedBody.messages && Array.isArray(parsedBody.messages)) {
-    for (let i = parsedBody.messages.length - 1; i >= 0; i--) {
-      const message = parsedBody.messages[i];
-      if (message.role === "user" && message.content) {
-        actualUserMessage = message.content;
-        break;
+    if (parsedBody.userMessage) {
+      actualUserMessage = parsedBody.userMessage;
+    } else if (parsedBody.prompt) {
+      actualUserMessage = parsedBody.prompt;
+    } else if (parsedBody.messages && Array.isArray(parsedBody.messages)) {
+      for (let i = parsedBody.messages.length - 1; i >= 0; i--) {
+        const message = parsedBody.messages[i];
+        if (message.role === "user" && message.content) {
+          actualUserMessage = message.content;
+          break;
+        }
       }
     }
-  }
 
-  if (!actualUserMessage) {
-    const conversationRegex = /Current conversation:[^]*Human: ([^\n]+)/;
-    const match = body.match(conversationRegex);
-    if (match && match[1]) {
-      actualUserMessage = match[1];
+    if (!actualUserMessage) {
+      const conversationRegex = /Current conversation:[^]*Human: ([^\n]+)/;
+      const match = body.match(conversationRegex);
+      if (match && match[1]) {
+        actualUserMessage = match[1];
+      }
     }
-  }
 
-  const cleaned = cleanUserMessage(actualUserMessage);
-  return cleaned || "Empty message";
+    const cleaned = cleanUserMessage(actualUserMessage);
+    return cleaned || "Empty message";
+  } catch (error) {
+    return "Error processing message";
+  }
 }
 
 export function configureLogging(proxy: any): void {
@@ -83,10 +87,12 @@ export function configureLogging(proxy: any): void {
       const chunkStr = chunk.toString();
       responseChunks.push(chunkStr);
 
-      const jsonData = JSON.parse(chunkStr);
-      if (jsonData.message?.content) {
-        aiResponse += jsonData.message.content;
-      }
+      try {
+        const jsonData = JSON.parse(chunkStr);
+        if (jsonData.message?.content) {
+          aiResponse += jsonData.message.content;
+        }
+      } catch (e) {}
     });
 
     proxyRes.on("end", () => {
@@ -104,19 +110,15 @@ export function configureLogging(proxy: any): void {
       const logEntry = `
 ==================================================
 DATE: ${timestamp}
-IP: ${clientIP}
 Human: ${userMessage}
 AI: ${aiResponse}
 ==================================================`;
 
-      console.log(logEntry);
-
       const logFile = path.join(
         logsDir,
-        `chat_log_${new Date().toISOString().replace(/[:.]/g, "-")}.txt`
+        `${clientIP.replace(/[^a-zA-Z0-9]/g, "_")}.txt`
       );
-      fs.writeFileSync(logFile, logEntry);
-
+      fs.appendFileSync(logFile, logEntry);
       userMessages.delete(requestId);
     });
   });
