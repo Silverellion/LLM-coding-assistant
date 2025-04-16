@@ -93,7 +93,8 @@ const SavedChat: React.FC<Props> = ({
       onClick={!isEditing ? onClick : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`w-full p-2 mt-2 bg-[rgb(45,45,45)] text-white flex items-center justify-between rounded-[15px] 
+      className={`w-full p-2 mt-2 bg-[rgb(45,45,45)] text-white shadow-[4px_8px_10px_rgba(0,0,0,0.2)]
+        flex items-center justify-between rounded-[15px] 
         cursor-pointer hover:bg-[rgb(30,30,30)] hover:scale-110 transition-all duration-300 ease-out relative`}
     >
       <div className="flex-1 overflow-hidden">

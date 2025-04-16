@@ -65,8 +65,8 @@ const ChatBubbles: React.FC<Props> = ({
             >
               <div
                 className={`${message.isUser ? "bg-[rgb(45,45,45)]" : ""} 
-                  text-white rounded-[1rem] 
-                  mt-5 p-3 max-w-full 
+                  mt-4 mb-1 p-3 max-w-full 
+                  text-white rounded-[1rem] shadow-[4px_8px_10px_rgba(0,0,0,0.2)]
                   break-words whitespace-pre-wrap overflow-wrap-anywhere`}
               >
                 <CodeblockConverter inputMessage={message.text} />
