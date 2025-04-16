@@ -7,10 +7,14 @@ import LoadingAnimation from "./LoadingAnimation";
 type Props = {
   userInput: { dateSent: Date; text: string } | null;
   messages: ChatMessage[];
-  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  onAIResponse?: (response: string) => void;
 };
 
-const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
+const ChatBubbles: React.FC<Props> = ({
+  userInput,
+  messages,
+  onAIResponse,
+}) => {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false);
   const [streamingResponse, setStreamingResponse] = React.useState<string>("");
   const chatContainerRef = React.useRef<HTMLDivElement>(null);
@@ -23,11 +27,7 @@ const ChatBubbles: React.FC<Props> = ({ userInput, messages, setMessages }) => {
       const finalResponse = await OllamaResponse(input, (text) =>
         setStreamingResponse(text)
       );
-
-      setMessages((prev) => [
-        ...prev,
-        { text: finalResponse || "", isUser: false },
-      ]);
+      if (onAIResponse) onAIResponse(finalResponse);
     } catch (error) {
       console.log("Error getting Ollama response:", error);
     } finally {

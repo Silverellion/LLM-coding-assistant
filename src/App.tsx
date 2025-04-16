@@ -53,22 +53,6 @@ function App() {
     syncState(chatManager.handleRenameChat(chatId, newName));
   };
 
-  const updateMessagesAndSavedChat: React.Dispatch<
-    React.SetStateAction<ChatMessage[]>
-  > = (newMessagesAction) => {
-    const newMessages =
-      typeof newMessagesAction === "function"
-        ? newMessagesAction(messages)
-        : newMessagesAction;
-    setMessages(newMessages);
-    const lastMessage = newMessages[newMessages.length - 1];
-    if (lastMessage && !lastMessage.isUser) {
-      syncState(
-        chatManager.updateWithAIResponse(lastMessage.text, newMessages)
-      );
-    }
-  };
-
   return (
     <div className="w-screen h-screen bg-[rgb(30,30,30)] flex">
       <Sidebar
@@ -88,7 +72,11 @@ function App() {
         <ChatBubbles
           userInput={userInput}
           messages={messages}
-          setMessages={updateMessagesAndSavedChat}
+          onAIResponse={(response) => {
+            if (response) {
+              syncState(chatManager.updateWithAIResponse(response, messages));
+            }
+          }}
         />
         <MainTextbox setUserInput={handleUserInput} />
       </div>
