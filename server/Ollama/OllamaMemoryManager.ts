@@ -3,7 +3,8 @@ import type { Message } from "ollama";
 
 export class OllamaMemoryManager {
   private static conversations: Map<string, Message[]> = new Map();
-  private static systemMessage = import.meta.env.VITE_OLLAMA_SYSTEM_MESSAGE;
+  private static systemMessage = (import.meta as any).env
+    .VITE_OLLAMA_SYSTEM_MESSAGE;
 
   static async chat(
     memoryId: string,
