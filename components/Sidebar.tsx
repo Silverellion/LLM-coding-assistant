@@ -43,8 +43,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           hover:scale-110 hover:bg-[rgb(200,40,40)] transition-transform duration-300`}
         >
           <span
-            className={`inline-block pb-1 text-[25px] 
-          transform transition-transform duration-900 
+            className={`inline-block text-[25px] 
+            transform transition-transform duration-900 
           ${isCollapsed ? "rotate-0" : "rotate-900"}`}
           >
             &#10097;
