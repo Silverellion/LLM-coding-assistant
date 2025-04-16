@@ -4,37 +4,25 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
+  const hostname = env.CLOUDFLARE_TUNNEL_HOSTNAME || "localhost";
 
   return {
     plugins: [react(), tailwindcss()],
     server: {
       host: true,
       port: 5173,
-      strictPort: false,
-      allowedHosts: [
-        env.CLOUDFLARE_TUNNEL_HOSTNAME?.replace(/^https?:\/\//, "") ||
-          "localhost",
-      ],
+      allowedHosts: [hostname],
       proxy: {
         "/api/ollama": {
-          target: env.OLLAMA_BASE_URL || "http://localhost:11434",
+          target: "http://localhost:11434",
           changeOrigin: true,
-          secure: false,
           headers: {
             Host: "localhost:11434",
             Origin: "http://localhost:11434",
           },
-          rewrite: (path) => {
-            const newPath = path.replace(/^\/api\/ollama/, "");
-            return newPath;
-          },
+          rewrite: () => "/api/chat",
         },
       },
-    },
-    define: {
-      "process.env.VITE_API_PREFIX": JSON.stringify(
-        env.VITE_API_PREFIX || "/api/ollama"
-      ),
     },
   };
 });
