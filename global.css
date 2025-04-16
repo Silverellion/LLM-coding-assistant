@@ -9,6 +9,15 @@
   src: url("./assets/fonts/ShadowsIntoLight-Regular.ttf");
 }
 
+@font-face {
+  font-family: "GGSansRegular";
+  src: url("./assets/fonts/GGSansRegular.ttf");
+}
+
+body {
+  font-family: "GGSansRegular", sans-serif;
+}
+
 ::-webkit-scrollbar-track {
   background: rgb(60, 60, 60);
   border-radius: 999px;
