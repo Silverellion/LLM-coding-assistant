@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={toggleSidebar}
           className={`${isCollapsed ? "right-[-25px]" : "right-[-12px]"} 
           absolute top-1/2 transform -translate-y-1/2 
-          bg-[rgb(200,60,60)] text-white p-2 rounded shadow-md cursor-pointer 
+          bg-[rgb(200,60,60)] text-white p-2 rounded cursor-pointer 
           hover:scale-110 hover:bg-[rgb(200,40,40)] transition-transform duration-300`}
         >
           <span

@@ -66,7 +66,7 @@ const MainTextbox: React.FC<Props> = ({ setUserInput }) => {
 
   return (
     <>
-      <div className="relative w-full max-w-3xl mt-auto mb-10">
+      <div className="relative w-full max-w-3xl mt-auto mb-10 shadow-2xl">
         <div
           ref={containerRef}
           className="relative w-full rounded-[1rem] bg-[rgb(45,45,45)]"
