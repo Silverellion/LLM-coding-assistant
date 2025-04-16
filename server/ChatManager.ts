@@ -15,7 +15,6 @@ export class ChatManager {
   private static instance: ChatManager;
   private currentChatId: string | null = null;
   private savedChats: SavedChat[] = [];
-  private modelName: string = "qwen2.5-coder";
 
   private constructor() {}
 
@@ -153,27 +152,6 @@ export class ChatManager {
     messages: ChatMessage[]
   ): void {
     OllamaMemoryManager.clearMemory(chatId);
-    const chain = OllamaMemoryManager.getOrCreateChain(chatId, this.modelName);
-    const messagePairs: { input: string; response: string }[] = [];
-    for (let i = 0; i < messages.length - 1; i += 2) {
-      const userMessage = messages[i];
-      const aiMessage = messages[i + 1];
-      if (userMessage?.isUser && aiMessage && !aiMessage.isUser) {
-        messagePairs.push({
-          input: userMessage.text,
-          response: aiMessage.text,
-        });
-      }
-    }
-    if (messagePairs.length > 0) {
-      (async () => {
-        for (const pair of messagePairs) {
-          await chain.memory!.saveContext(
-            { input: pair.input },
-            { response: pair.response }
-          );
-        }
-      })();
-    }
+    OllamaMemoryManager.rebuildConversation(chatId, messages);
   }
 }

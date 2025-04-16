@@ -14,22 +14,11 @@ export default async function OllamaResponse(
   const chatManager = ChatManager.getInstance();
   const memoryId = chatManager.getCurrentChatId() || "temp-" + Date.now();
 
-  const chain = OllamaMemoryManager.getOrCreateChain(memoryId, model, baseUrl);
-  let fullResponse = "";
-
-  return chain
-    .call({
-      input: prompt,
-      callbacks: [
-        {
-          handleLLMNewToken(token: string) {
-            fullResponse += token;
-            if (streamHandler) streamHandler(fullResponse);
-          },
-        },
-      ],
-    })
-    .then((response) => {
-      return response.response;
-    });
+  return await OllamaMemoryManager.chat(
+    memoryId,
+    prompt,
+    model,
+    baseUrl,
+    streamHandler || undefined
+  );
 }

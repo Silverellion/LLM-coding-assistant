@@ -1,58 +1,88 @@
-import { BufferMemory } from "langchain/memory";
-import { ConversationChain } from "langchain/chains";
-import { ChatOllama } from "@langchain/ollama";
+import { Ollama } from "ollama";
+import type { Message } from "ollama";
 
 export class OllamaMemoryManager {
-  private static memories: Map<string, BufferMemory> = new Map();
-  private static chains: Map<string, ConversationChain> = new Map();
-  private static apiPrefix = import.meta.env.VITE_API_PREFIX || "/api/ollama";
+  private static conversations: Map<string, Message[]> = new Map();
+  private static systemMessage = import.meta.env.VITE_OLLAMA_SYSTEM_MESSAGE;
 
-  static getOrCreateChain(
+  static async chat(
     memoryId: string,
+    userMessage: string,
     model: string,
-    customBaseUrl?: string
-  ): ConversationChain {
-    if (!this.chains.has(memoryId)) {
-      const memory = new BufferMemory({
-        returnMessages: true,
-        memoryKey: "history",
-      });
-      this.memories.set(memoryId, memory);
-
-      const baseUrl =
-        customBaseUrl ||
-        (typeof window !== "undefined"
-          ? window.location.origin + this.apiPrefix
-          : "http://localhost:5173" + this.apiPrefix);
-
-      const ollama = new ChatOllama({
-        baseUrl: baseUrl,
-        model: model,
-        streaming: true,
-      });
-
-      const chain = new ConversationChain({
-        llm: ollama,
-        memory: memory,
-      });
-
-      this.chains.set(memoryId, chain);
+    customBaseUrl?: string,
+    streamHandler?: (content: string) => void
+  ): Promise<string> {
+    if (!this.conversations.has(memoryId)) {
+      this.conversations.set(memoryId, [
+        { role: "system", content: this.systemMessage },
+      ]);
     }
 
-    return this.chains.get(memoryId)!;
+    const conversation = this.conversations.get(memoryId)!;
+    conversation.push({ role: "user", content: userMessage });
+
+    const client = customBaseUrl
+      ? new Ollama({ host: customBaseUrl })
+      : new Ollama();
+
+    let fullResponse = "";
+
+    if (streamHandler) {
+      const response = await client.chat({
+        model: model,
+        messages: conversation,
+        stream: true,
+      });
+
+      for await (const part of response) {
+        fullResponse += part.message.content;
+        streamHandler(fullResponse);
+      }
+    } else {
+      const response = await client.chat({
+        model: model,
+        messages: conversation,
+      });
+
+      fullResponse = response.message.content;
+    }
+
+    conversation.push({ role: "assistant", content: fullResponse });
+    return fullResponse;
   }
 
   static clearMemory(memoryId: string): boolean {
-    if (this.memories.has(memoryId)) {
-      this.memories.delete(memoryId);
-      this.chains.delete(memoryId);
+    if (this.conversations.has(memoryId)) {
+      this.conversations.delete(memoryId);
       return true;
     }
     return false;
   }
 
   static clearAllMemories(): void {
-    this.memories.clear();
-    this.chains.clear();
+    this.conversations.clear();
+  }
+
+  static getConversationHistory(memoryId: string): Message[] | null {
+    return this.conversations.get(memoryId) || null;
+  }
+
+  static rebuildConversation(
+    memoryId: string,
+    messages: { text: string; isUser: boolean }[]
+  ): void {
+    // Start with system message
+    const conversation: Message[] = [
+      { role: "system", content: this.systemMessage },
+    ];
+
+    for (const msg of messages) {
+      conversation.push({
+        role: msg.isUser ? "user" : "assistant",
+        content: msg.text,
+      });
+    }
+
+    this.conversations.set(memoryId, conversation);
   }
 }
