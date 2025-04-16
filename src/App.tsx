@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import "../global.css";
-import ChatBubbles from "../components/ChatBubbles";
-import MainTextbox from "../components/MainTextbox";
-import Sidebar from "../components/Sidebar";
 import { ChatManager, ChatMessage, SavedChat } from "../server/ChatManager";
+import "../global.css";
+import Sidebar from "../components/Sidebar";
+import ChatBubbles from "../components/ChatBubbles";
+import GreetingMessage from "../components/GrretingMessage";
+import MainTextbox from "../components/MainTextbox";
 
 function App() {
   const chatManager = ChatManager.getInstance();
@@ -69,6 +70,7 @@ function App() {
           isSidebarCollapsed ? "ml-[20px] mr-[20px]" : "md:ml-[300px] ml-[0px]"
         }`}
       >
+        <GreetingMessage />
         <ChatBubbles
           userInput={userInput}
           messages={messages}
