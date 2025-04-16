@@ -37,8 +37,8 @@ const CodeblockConverter: React.FC<Props> = ({ inputMessage }) => {
         <button
           onClick={handleCopy}
           className="
-            absolute top-2 right-2 z-10 px-2 py-1 
-            bg-[rgb(200,60,60)] text-white rounded cursor-pointer
+            absolute top-2 right-2 z-10 px-2 py-1 cursor-pointer
+            bg-[rgb(200,60,60)] text-white rounded shadow-[4px_8px_10px_rgba(0,0,0,0.5)] 
             transition duration-300 flex items-center gap-2
             hover:scale-120 hover:bg-[rgb(200,40,40)]
           "
