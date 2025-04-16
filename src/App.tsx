@@ -13,6 +13,7 @@ function App() {
   const [savedChats, setSavedChats] = useState<SavedChat[]>(
     chatManager.getSavedChats()
   );
+  const [isChatStarted, setIsChatStarted] = useState(false);
 
   const [userInput, setUserInput] = useState<{
     dateSent: Date;
@@ -23,6 +24,12 @@ function App() {
     setSavedChats(chatManager.getSavedChats());
   }, []);
 
+  useEffect(() => {
+    if (messages.length > 0) {
+      setIsChatStarted(true);
+    }
+  }, [messages]);
+
   const syncState = (result: any) => {
     if (result.newMessages !== undefined) setMessages(result.newMessages);
     setSavedChats(result.savedChats);
@@ -30,16 +37,19 @@ function App() {
 
   const handleUserInput = (text: string) => {
     setUserInput({ dateSent: new Date(), text });
+    setIsChatStarted(true);
     syncState(chatManager.handleUserInput(text, messages));
   };
 
   const handleNewChat = () => {
     syncState(chatManager.handleNewChat());
     setUserInput(null);
+    setIsChatStarted(false);
   };
 
   const handleLoadChat = (chatId: string) => {
     syncState(chatManager.handleLoadChat(chatId));
+    setIsChatStarted(true);
   };
 
   const handleDeleteChat = (chatId: string) => {
@@ -47,6 +57,7 @@ function App() {
     syncState(result);
     if (result.isCurrentChat) {
       setUserInput(null);
+      setIsChatStarted(false);
     }
   };
 
@@ -66,11 +77,16 @@ function App() {
         onRenameChat={handleRenameChat}
       />
       <div
-        className={`flex flex-col items-center justify-end transition-all duration-300 w-full ${
+        className={`flex flex-col transition-all duration-300 w-full ${
           isSidebarCollapsed ? "ml-[20px] mr-[20px]" : "md:ml-[300px] ml-[0px]"
+        } ${
+          isChatStarted
+            ? "items-center justify-end"
+            : "items-center justify-center"
         }`}
       >
-        <GreetingMessage />
+        {!isChatStarted && <GreetingMessage />}
+
         <ChatBubbles
           userInput={userInput}
           messages={messages}
@@ -80,7 +96,14 @@ function App() {
             }
           }}
         />
-        <MainTextbox setUserInput={handleUserInput} />
+
+        <div
+          className={`w-full flex justify-center ${
+            isChatStarted ? "mt-auto" : "mt-8"
+          }`}
+        >
+          <MainTextbox setUserInput={handleUserInput} />
+        </div>
       </div>
     </div>
   );
