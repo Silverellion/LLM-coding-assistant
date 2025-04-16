@@ -20,42 +20,52 @@ function extractUserMessage(body: string): string {
   const parsedBody = JSON.parse(body);
   let actualUserMessage = "";
 
-  if (parsedBody.messages && parsedBody.messages.length > 0) {
-    const lastMessage = parsedBody.messages[parsedBody.messages.length - 1];
-    if (lastMessage.content) {
-      actualUserMessage = lastMessage.content;
-    } else if (lastMessage.kwargs && lastMessage.kwargs.content) {
-      actualUserMessage = lastMessage.kwargs.content;
+  if (parsedBody.userMessage) {
+    actualUserMessage = parsedBody.userMessage;
+  } else if (parsedBody.prompt) {
+    actualUserMessage = parsedBody.prompt;
+  } else if (parsedBody.messages && Array.isArray(parsedBody.messages)) {
+    for (let i = parsedBody.messages.length - 1; i >= 0; i--) {
+      const message = parsedBody.messages[i];
+      if (message.role === "user" && message.content) {
+        actualUserMessage = message.content;
+        break;
+      }
     }
   }
 
-  const conversationRegex = /Current conversation:[^]*Human: ([^\n]+)/;
-  const match = body.match(conversationRegex);
-  if (match && match[1]) {
-    actualUserMessage = match[1];
+  if (!actualUserMessage) {
+    const conversationRegex = /Current conversation:[^]*Human: ([^\n]+)/;
+    const match = body.match(conversationRegex);
+    if (match && match[1]) {
+      actualUserMessage = match[1];
+    }
   }
 
-  return cleanUserMessage(actualUserMessage);
+  const cleaned = cleanUserMessage(actualUserMessage);
+  return cleaned || "Empty message";
 }
 
 export function configureLogging(proxy: any): void {
-  proxy.on("proxyReq", (req: any) => {
-    let body = "";
-    req.on("data", (chunk: Buffer) => {
-      body += chunk.toString();
-    });
+  proxy.on("proxyReq", (proxyReq: any, req: any) => {
+    const originalWrite = proxyReq.write;
+    proxyReq.write = function (data: any) {
+      if (data) {
+        const body = data.toString();
+        const clientIP =
+          req.headers["cf-connecting-ip"] ||
+          req.headers["x-forwarded-for"] ||
+          req.socket.remoteAddress ||
+          "unknown";
 
-    req.on("end", () => {
-      const clientIP =
-        req.headers["cf-connecting-ip"] ||
-        req.headers["x-forwarded-for"] ||
-        req.socket.remoteAddress ||
-        "unknown";
+        const userMessage = extractUserMessage(body);
+        const requestId = clientIP + "_" + Date.now();
+        userMessages.set(requestId, userMessage);
+        req.requestId = requestId;
+      }
 
-      const userMessage = extractUserMessage(body);
-      userMessages.set(clientIP, userMessage);
-      userMessages.set(clientIP + "_raw", body);
-    });
+      return originalWrite.apply(proxyReq, arguments);
+    };
   });
 
   proxy.on("proxyRes", (proxyRes: any, req: any) => {
@@ -65,6 +75,7 @@ export function configureLogging(proxy: any): void {
       req.socket.remoteAddress ||
       "unknown";
 
+    const requestId = req.requestId || clientIP + "_unknown";
     const responseChunks: string[] = [];
     let aiResponse = "";
 
@@ -79,22 +90,13 @@ export function configureLogging(proxy: any): void {
     });
 
     proxyRes.on("end", () => {
-      const userMessage = userMessages.get(clientIP) || "Unknown user message";
+      const userMessage = userMessages.get(requestId) || "Unknown user message";
 
       if (!aiResponse) {
         const fullResponse = responseChunks.join("");
-        fullResponse
-          .split("\n")
-          .filter((line) => line.trim())
-          .forEach((line) => {
-            const obj = JSON.parse(line);
-            if (obj.message?.content) {
-              aiResponse += obj.message.content;
-            }
-          });
-
-        if (!aiResponse) {
-          aiResponse = fullResponse.slice(0, 100) + "...";
+        const jsonData = JSON.parse(fullResponse);
+        if (jsonData.message?.content) {
+          aiResponse = jsonData.message.content;
         }
       }
 
@@ -115,8 +117,7 @@ AI: ${aiResponse}
       );
       fs.writeFileSync(logFile, logEntry);
 
-      userMessages.delete(clientIP);
-      userMessages.delete(clientIP + "_raw");
+      userMessages.delete(requestId);
     });
   });
 }

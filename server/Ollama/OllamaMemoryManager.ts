@@ -71,7 +71,6 @@ export class OllamaMemoryManager {
     memoryId: string,
     messages: { text: string; isUser: boolean }[]
   ): void {
-    // Start with system message
     const conversation: Message[] = [
       { role: "system", content: this.systemMessage },
     ];
