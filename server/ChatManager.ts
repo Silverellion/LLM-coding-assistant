@@ -31,72 +31,118 @@ export class ChatManager {
   }
 
   public getSavedChats(): SavedChat[] {
-    return [...this.savedChats];
+    return this.savedChats;
+  }
+
+  public handleUserInput(text: string, currentMessages: ChatMessage[]) {
+    this.addUserMessage(text);
+    return {
+      newMessages: [...currentMessages, { text, isUser: true }],
+      savedChats: this.getSavedChats(),
+    };
+  }
+
+  public handleNewChat() {
+    this.createNewChat();
+    return {
+      newMessages: [],
+      savedChats: this.getSavedChats(),
+    };
+  }
+
+  public handleLoadChat(chatId: string) {
+    const loadedChat = this.loadChat(chatId);
+    return {
+      newMessages: loadedChat?.messages || [],
+      savedChats: this.getSavedChats(),
+    };
+  }
+
+  public handleRenameChat(chatId: string, newName: string) {
+    this.savedChats = this.savedChats.map((chat) =>
+      chat.id === chatId ? { ...chat, name: newName } : chat
+    );
+    return { savedChats: this.getSavedChats() };
+  }
+
+  public handleDeleteChat(chatId: string) {
+    const isCurrentChat = chatId === this.currentChatId;
+    if (isCurrentChat) {
+      OllamaMemoryManager.clearMemory(chatId);
+      this.createNewChat();
+    }
+    this.savedChats = this.savedChats.filter((chat) => chat.id !== chatId);
+    return {
+      newMessages: [],
+      savedChats: this.getSavedChats(),
+      isCurrentChat,
+    };
+  }
+
+  public updateWithAIResponse(
+    response: string,
+    currentMessages: ChatMessage[]
+  ) {
+    this.updateChatWithAIResponse(response);
+    return {
+      newMessages: [...currentMessages, { text: response, isUser: false }],
+      savedChats: this.getSavedChats(),
+    };
   }
 
   public setSavedChats(chats: SavedChat[]): void {
-    this.savedChats = [...chats];
+    this.savedChats = chats;
   }
 
   public createNewChat(): void {
-    try {
-      if (this.currentChatId) {
+    if (this.currentChatId) {
+      try {
         OllamaMemoryManager.clearMemory(this.currentChatId);
+      } catch (error) {
+        console.error("Error clearing memory:", error);
       }
-    } catch (error) {
-      console.error("Error clearing memory:", error);
-    } finally {
-      this.currentChatId = null;
     }
+    this.currentChatId = null;
   }
 
   public loadChat(chatId: string): SavedChat | null {
     const chatToLoad = this.savedChats.find((chat) => chat.id === chatId);
-
-    if (chatToLoad) {
-      // Clear memory for the current chat if it exists
-      if (this.currentChatId) {
-        OllamaMemoryManager.clearMemory(this.currentChatId);
-      }
-      // Update Ai's memory
-      this.currentChatId = chatId;
-      this.rebuildMemoryFromMessages(chatId, chatToLoad.messages);
-      return chatToLoad;
+    if (!chatToLoad) return null;
+    if (this.currentChatId) {
+      OllamaMemoryManager.clearMemory(this.currentChatId);
     }
-    return null;
+    this.currentChatId = chatId;
+    this.rebuildMemoryFromMessages(chatId, chatToLoad.messages);
+    return chatToLoad;
   }
 
   public addUserMessage(text: string): string {
-    // Create a new chat if this is the first message of a new chat
     if (!this.currentChatId) {
       const newChatId = Date.now().toString();
       this.currentChatId = newChatId;
-
-      const newChat: SavedChat = {
+      this.savedChats.push({
         id: newChatId,
         name: text,
         messages: [{ text, isUser: true }],
-      };
-
-      this.savedChats = [...this.savedChats, newChat];
+      });
       return newChatId;
-    } else {
-      // Update existing chat with the new message
-      this.savedChats = this.savedChats.map((chat) =>
-        chat.id === this.currentChatId
-          ? { ...chat, messages: [...chat.messages, { text, isUser: true }] }
-          : chat
-      );
-      return this.currentChatId;
     }
+    this.savedChats = this.savedChats.map((chat) =>
+      chat.id === this.currentChatId
+        ? { ...chat, messages: [...chat.messages, { text, isUser: true }] }
+        : chat
+    );
+    return this.currentChatId;
   }
 
   public updateChatWithAIResponse(response: string): void {
     if (this.currentChatId) {
-      const aiMessage: ChatMessage = { text: response, isUser: false };
       this.savedChats = this.savedChats.map((chat) =>
         chat.id === this.currentChatId
-          ? { ...chat, messages: [...chat.messages, aiMessage] }
+          ? {
+              ...chat,
+              messages: [...chat.messages, { text: response, isUser: false }],
+            }
           : chat
       );
     }
@@ -106,36 +152,23 @@ export class ChatManager {
     chatId: string,
     messages: ChatMessage[]
   ): void {
-    // Clear any existing memory for this chat ID
     OllamaMemoryManager.clearMemory(chatId);
-    // Get the memory chain for this chat ID
     const chain = OllamaMemoryManager.getOrCreateChain(chatId, this.modelName);
-
-    // Process message pairs sequentially
-    this.processMessagePairs(chain, messages);
-  }
-
-  private processMessagePairs(chain: any, messages: ChatMessage[]): void {
-    // Extract user-AI message pairs
     const messagePairs: { input: string; response: string }[] = [];
-
     for (let i = 0; i < messages.length - 1; i += 2) {
       const userMessage = messages[i];
       const aiMessage = messages[i + 1];
-
-      if (userMessage && userMessage.isUser && aiMessage && !aiMessage.isUser) {
+      if (userMessage?.isUser && aiMessage && !aiMessage.isUser) {
         messagePairs.push({
           input: userMessage.text,
           response: aiMessage.text,
         });
       }
     }
-
-    // Process pairs in sequence
     if (messagePairs.length > 0) {
       (async () => {
         for (const pair of messagePairs) {
-          await chain.memory.saveContext(
+          await chain.memory!.saveContext(
             { input: pair.input },
             { response: pair.response }
           );
