@@ -7,7 +7,7 @@ import { ChatManager, ChatMessage, SavedChat } from "../server/ChatManager";
 
 function App() {
   const chatManager = ChatManager.getInstance();
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [savedChats, setSavedChats] = useState<SavedChat[]>(
     chatManager.getSavedChats()
