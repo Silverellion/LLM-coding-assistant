@@ -9,7 +9,7 @@ const GreetingMessage: React.FC = () => {
           src={SpinningAmogus}
           className="rounded-full shadow-[4px_8px_10px_rgba(0,0,0,0.2)] max-w-20 mx-auto"
         />
-        <div className="text-white">
+        <div className="text-white" style={{ fontFamily: "ShadowsIntoLight" }}>
           I wanna Special Summon Kitkallos and mill 5
         </div>
       </div>

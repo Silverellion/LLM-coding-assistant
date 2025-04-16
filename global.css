@@ -4,6 +4,11 @@
   height: 10px;
 }
 
+@font-face {
+  font-family: "ShadowsIntoLight";
+  src: url("./assets/fonts/ShadowsIntoLight-Regular.ttf");
+}
+
 ::-webkit-scrollbar-track {
   background: rgb(60, 60, 60);
   border-radius: 999px;
