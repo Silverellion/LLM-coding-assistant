@@ -23,10 +23,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   return (
     <>
+      {!isCollapsed && (
+        <div
+          className="md:hidden fixed inset-0 backdrop-blur-[1px] z-10"
+          onClick={toggleSidebar}
+        />
+      )}
+
       <div
         className={`fixed flex flex-col top-0 left-0 h-full ${
           isCollapsed ? "w-[0px]" : "w-[300px]"
-        } bg-[rgb(15,15,15)] transition-width duration-300 ease-out`}
+        } bg-[rgb(15,15,15)] transition-width duration-300 ease-out z-20`}
       >
         <button
           onClick={toggleSidebar}

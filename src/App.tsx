@@ -66,7 +66,7 @@ function App() {
       />
       <div
         className={`flex flex-col items-center justify-end transition-all duration-300 w-full ${
-          isSidebarCollapsed ? "ml-[20px] mr-[20px]" : "ml-[300px]"
+          isSidebarCollapsed ? "ml-[20px] mr-[20px]" : "md:ml-[300px] ml-[0px]"
         }`}
       >
         <ChatBubbles
