@@ -111,8 +111,7 @@ export function configureLogging(proxy: any): void {
 ==================================================
 DATE: ${timestamp}
 Human: ${userMessage}
-AI: ${aiResponse}
-==================================================`;
+AI: ${aiResponse}`;
 
       const logFile = path.join(
         logsDir,
